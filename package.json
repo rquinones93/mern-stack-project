@@ -1,0 +1,33 @@
+{
+  "name": "devconnector",
+  "version": "1.0.0",
+  "description": "Social Network for Developers - Udemy Course",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start:dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rquinones93/devconnector.git"
+  },
+  "author": "Robert Quinones",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rquinones93/devconnector/issues"
+  },
+  "homepage": "https://github.com/rquinones93/devconnector#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.2.2",
+    "mongoose": "^5.1.3",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "validator": "^10.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.17.5"
+  }
+}

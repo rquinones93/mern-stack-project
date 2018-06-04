@@ -23,3 +23,15 @@ Following Traversy Media's MERN Stack Front to Back Udemy Course.
 ## Development Environment
 
 * Visual Studio Code - Editor
+
+## Node Packages
+
+* bcryptjs
+* body-parser
+* express
+* jsonwebtoken
+* mongoose
+* nodemon
+* passport
+* passport-jwt
+* validator
