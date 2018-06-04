@@ -7,31 +7,31 @@ Following Traversy Media's MERN Stack Front to Back Udemy Course.
 
 ## Tech Stack
 
-* Node.js - Backend
-* Express.js - Backend
-* React.js - Frontend
-* Redux - State Management
-* MongoDB - Database, using mLab free account
-* Heroku - Deployment
+* [NodeJS](https://nodejs.org/en/) - Backend
+* [ExpressJS](https://expressjs.com/) - Web Application Framework
+* [ReactJS](https://reactjs.org/) - Frontend
+* [ReduxJS](https://redux.js.org/) - State Management
+* MongoDB - Database, using [mLab](https://mlab.com/) free account
+* [Heroku](https://www.heroku.com/) - Deployment
 * Git - Version Control
 
 ## Testing
 
-* Postman
-* Jest ( Looking into it )
+* [Postman](https://www.getpostman.com/)
+* [Jest](https://facebook.github.io/jest/) ( Looking into it )
 
 ## Development Environment
 
-* Visual Studio Code - Editor
+* [Visual Studio Code](https://code.visualstudio.com/) - Editor
 
 ## Node Packages
 
-* bcryptjs
-* body-parser
-* express
-* jsonwebtoken
-* mongoose
-* nodemon
-* passport
-* passport-jwt
-* validator
+* [bcryptjs](https://www.npmjs.com/package/bcryptjs)
+* [body-parser](https://www.npmjs.com/package/body-parser)
+* [express](https://www.npmjs.com/package/express)
+* [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+* [mongoose](https://www.npmjs.com/package/mongoose)
+* [nodemon](https://www.npmjs.com/package/nodemon)
+* [passport](https://www.npmjs.com/package/passport)
+* [passport-jwt](https://www.npmjs.com/package/passport-jwt)
+* [validator](https://www.npmjs.com/package/validator)
