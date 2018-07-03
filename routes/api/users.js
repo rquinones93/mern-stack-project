@@ -7,6 +7,9 @@ const jwt = require('jsonwebtoken');
 const keys = require('../../config/keys');
 const passport = require('passport');
 
+// Load Input Validation
+const validateRegisterInput = require('../../validation/register');
+
 // Load User model
 const User = require('../../models/Users');
 
@@ -23,6 +26,13 @@ router.get('/test', (request, response) => {
 // @desc Register a user
 // @ access Public
 router.post('/register', (request, response) => {
+  const { errors, isValid } = validateRegisterInput(request.body);
+
+  // Check Validation
+  if(!isValid) {
+    return response.status(400).json(errors);
+  }
+
   // Use Mongoose to find if the email exists
   // Find one is a Mongoose Method
   User.findOne({
@@ -31,9 +41,8 @@ router.post('/register', (request, response) => {
     .then(user => {
       // User with this email address exists within DB
       if (user) {
-        return response.status(400).json({
-          email: 'Email already exists.'
-        });
+        errors.email = 'Email already exists';
+        return response.status(400).json(errors);
 
       } else { // Email doesn't exist, create new
         // Set user variables
@@ -115,7 +124,7 @@ router.post('/login', (request, response) => {
                 keys.secretOrKey, 
                 { expiresIn: 3600 }, 
                 (error , token) => {
-                  if(error) throw error
+                  if(error) throw error;
 
                   response.json({
                     success: true,
