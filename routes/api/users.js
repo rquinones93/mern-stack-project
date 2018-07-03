@@ -3,6 +3,8 @@ const express = require('express');
 const router = express.Router();
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const keys = require('../../config/keys');
 
 // Load User model
 const User = require('../../models/Users');
@@ -96,17 +98,51 @@ router.post('/login', (request, response) => {
         bcrypt.compare(password, user.password)
           .then(isMatch => {
             if (isMatch) {
-              return response.json({
-                msg: 'Success'
+              // User Matched
+
+              // Sign JWT Token
+              // Takes a payload - user info that's decoded when sent to the server.
+              const payload = {
+                id: user.id,
+                name: user.name,
+                avatar: user.avatar
+              };
+
+              // Takes payload, secret / key, expiration timer, callback function
+              jwt.sign(
+                payload, 
+                keys.secretOrKey, 
+                { expiresIn: 3600 }, 
+                (err, token) => {
+                  response.json({
+                    success: true,
+                    token: 'Bearer' + token // Sends a Bearer Token on Successful Login
+                  });
               });
+
             } else {
               return response.status(400).json({
                 password: 'Password incorrect'
               });
             }
-          })
+          });
       }
     });
 });
 
 module.exports = router;
+
+/*
+  What is a JSON Web Token?
+  - A JWT is an open standard that defines a compact and self-contained
+    way for securely transmitting information between parties as JSON.
+
+  - This information can be verified and trusted because it is digitally
+    signed.
+
+  - Signed upsing a secret with a HMAC Algorithm, or a public/private RSA
+    or ECDSA key
+
+  What is a Bearer Token?
+  - The predominant type of access token used with OAuth 2.0
+*/
