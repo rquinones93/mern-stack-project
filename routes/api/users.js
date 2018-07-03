@@ -5,6 +5,7 @@ const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const keys = require('../../config/keys');
+const passport = require('passport');
 
 // Load User model
 const User = require('../../models/Users');
@@ -113,7 +114,9 @@ router.post('/login', (request, response) => {
                 payload, 
                 keys.secretOrKey, 
                 { expiresIn: 3600 }, 
-                (err, token) => {
+                (error , token) => {
+                  if(error) throw error
+
                   response.json({
                     success: true,
                     token: 'Bearer' + token // Sends a Bearer Token on Successful Login
@@ -128,6 +131,16 @@ router.post('/login', (request, response) => {
           });
       }
     });
+});
+
+// @route GET api/users/current
+// @desc Return the user that the token belongs to
+// @ access Private
+// 'jwt' is for the JWT Strategy we're using for authentication
+// The authentication method will be able to take the Bearer token passed
+// via the HTTP request, and will be able to cross check for a valid JWT
+router.get('/current', passport.authenticate('jwt', { session: false }), (request, response) => {
+  response.json(request.user);
 });
 
 module.exports = router;
