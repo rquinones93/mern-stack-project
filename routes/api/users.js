@@ -9,6 +9,8 @@ const passport = require('passport');
 
 // Load Input Validation
 const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
+
 
 // Load User model
 const User = require('../../models/Users');
@@ -26,10 +28,13 @@ router.get('/test', (request, response) => {
 // @desc Register a user
 // @ access Public
 router.post('/register', (request, response) => {
-  const { errors, isValid } = validateRegisterInput(request.body);
+  const {
+    errors,
+    isValid
+  } = validateRegisterInput(request.body);
 
   // Check Validation
-  if(!isValid) {
+  if (!isValid) {
     return response.status(400).json(errors);
   }
 
@@ -88,6 +93,16 @@ router.post('/register', (request, response) => {
 // @ access Public
 router.post('/login', (request, response) => {
   const {
+    errors,
+    isValid
+  } = validateLoginInput(request.body);
+
+  // Check Validation
+  if (!isValid) {
+    return response.status(400).json(errors);
+  }
+
+  const {
     email,
     password
   } = request.body;
@@ -99,9 +114,8 @@ router.post('/login', (request, response) => {
     .then(user => {
       // Check for user
       if (!user) {
-        return response.status(404).json({
-          email: 'User not found'
-        });
+        errors.email = 'User not found';
+        return response.status(404).json(errors);
 
       } else {
         // Check Password
@@ -120,22 +134,22 @@ router.post('/login', (request, response) => {
 
               // Takes payload, secret / key, expiration timer, callback function
               jwt.sign(
-                payload, 
-                keys.secretOrKey, 
-                { expiresIn: 3600 }, 
-                (error , token) => {
-                  if(error) throw error;
+                payload,
+                keys.secretOrKey, {
+                  expiresIn: 3600
+                },
+                (error, token) => {
+                  if (error) throw error;
 
                   response.json({
                     success: true,
-                    token: 'Bearer' + token // Sends a Bearer Token on Successful Login
+                    token: 'Bearer ' + token // Sends a Bearer Token on Successful Login
                   });
-              });
+                });
 
             } else {
-              return response.status(400).json({
-                password: 'Password incorrect'
-              });
+              errors.password = 'Password incorrect';
+              return response.status(400).json(errors);
             }
           });
       }
@@ -148,7 +162,9 @@ router.post('/login', (request, response) => {
 // 'jwt' is for the JWT Strategy we're using for authentication
 // The authentication method will be able to take the Bearer token passed
 // via the HTTP request, and will be able to cross check for a valid JWT
-router.get('/current', passport.authenticate('jwt', { session: false }), (request, response) => {
+router.get('/current', passport.authenticate('jwt', {
+  session: false
+}), (request, response) => {
   response.json(request.user);
 });
 
