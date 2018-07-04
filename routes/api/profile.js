@@ -4,6 +4,9 @@ const router = express.Router();
 const mongoose = require('mongoose'); // Connection to DB
 const passport = require('passport'); // Protected routes
 
+// Load Validation
+const validateProfileInput = require('../../validation/profile');
+
 // Load Profile Model
 const Profile = require('../../models/Profile');
 
@@ -18,6 +21,7 @@ router.get('/', passport.authenticate('jwt', {session: false}), (request, respon
 
   // Check profile table to find user based on their id
   Profile.findOne({user: request.user.id})
+    .populate('users', ['name', 'avatar']) // Add name and avatar to profile, populate from 'users' collection
     .then(profile => {
       // No valid user profile related to id
       if (!profile) {
@@ -35,6 +39,14 @@ router.get('/', passport.authenticate('jwt', {session: false}), (request, respon
 // @desc   Create or Edit user profile
 // @access Private - use jwt strategy to authenticatte
 router.post('/', passport.authenticate('jwt', { session: false }), (request, response) => {
+  const { errors, isValid } = validateProfileInput(request.body);
+
+  // Check Validation
+  if (!isValid ) {
+    // Return any errors with 400 status
+    response.status(400).json(errors);
+  }
+
   // Get all the fields needed for a user profile
   const profileFields = {};
 
@@ -68,7 +80,8 @@ router.post('/', passport.authenticate('jwt', { session: false }), (request, res
       if(profile) {
         // Update user profile, then return to front end
         Profile.findOneAndUpdate({ user: request.user.id }, { $set: profileFields }, { new: true})
-          .then(profile => response.json(profile));
+          .then(profile => response.json(profile))
+          .catch(error => response.status(400).json(error));
       } else {
         // Create user profile
         // Check to see if handle exists
@@ -82,7 +95,8 @@ router.post('/', passport.authenticate('jwt', { session: false }), (request, res
             // Save Profile to DB, then sent to front end
             new Profile(profileFields).save()
                 .then(profile => response.json(profile));
-          });
+          })
+          .catch(error => response.status(400).json(error));
       }
     });
 });
