@@ -32,12 +32,67 @@ router.get('/', passport.authenticate('jwt', {session: false}), (request, respon
       // Valid user profile related to id
       response.json(profile);
     })
-    .catch(error => response.status(404).json(error));
+    .catch(err => response.status(404).json(err));
 });
+
+// @route  GET api/profile/all
+// @desc   Get all profiles
+// @access Public 
+router.get('/all', (request, response) => {
+  const errors = {};
+
+  Profile.find()
+    .populate('user', ['name', 'avatar'])
+    .then( profiles => {
+      if(!profiles) {
+        errors.noprofile = 'There are no profiles';
+        response.status(404).json(errors);
+      }
+
+      response.status(200).json(profiles);
+    }).catch( err => response.json(404).json({ profile: 'There are no profiles'}));
+});
+
+// @route  GET api/profile/handle/:handle
+// @desc   Get profile by handle
+// @access Public 
+router.get('/handle/:handle', (request, response) => {
+  const errors = {};
+
+  Profile.findOne({ handle: request.params.handle })
+    .populate('users', ['name', 'avatar'])
+    .then( profile => {
+      if (!profile) {
+        errors.noprofile = 'There is no profile for this user';
+        response.status(404).json(errors);
+      }
+
+      response.json(profile);
+    }).catch( error => response.status(404).json(error));
+});
+
+// @route  GET api/profile/handle/:user_id
+// @desc   Get profile by user id
+// @access Public 
+router.get('/user/:user_id', (request, response) => {
+  const errors = {};
+
+  Profile.findOne({ user: request.params.user_id })
+    .populate('users', ['name', 'avatar'])
+    .then(profile => {
+      if (!profile) {
+        errors.noprofile = 'There is no profile for this user';
+        response.status(404).json(errors);
+      }
+
+      response.json(profile);
+    }).catch(error => response.status(404).json({ profile: 'There is no profile for this user'}));
+});
+
 
 // @route  POST api/profile
 // @desc   Create or Edit user profile
-// @access Private - use jwt strategy to authenticatte
+// @access Private - use jwt strategy to authenticate
 router.post('/', passport.authenticate('jwt', { session: false }), (request, response) => {
   const { errors, isValid } = validateProfileInput(request.body);
 
