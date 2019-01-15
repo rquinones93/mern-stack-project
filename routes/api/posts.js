@@ -85,4 +85,60 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (request
     });
 });
 
+//@route  POST api/posts/like/:id
+//@desc   Like a post
+//@access Private
+router.post('/like/:id', passport.authenticate('jwt', { session: false }), (request, response) => {
+  // Get User's Profile, Remove Post by ID from User's Profile
+  Profile.findOne({ user: request.user.id })
+    .then(profile => {
+      Post.findById(request.params.id)
+        .then(post => {
+          if (post.likes.filter(like => like.user.toString() === request.user.id ).length > 0 ) {
+            return response.status(400).json({ alreadyliked: 'User already liked this post'});
+          }
+
+          // Add user id to likes array
+          post.likes.unshift({ user: request.user.id });
+
+          // Save to DB
+          post.save().then( post => response.json(post) );
+
+        })
+        .catch(err => response.status(404).json({
+          postnotfound: 'No post found'
+        }));
+    });
+});
+
+//@route  POST api/posts/unlike/:id
+//@desc   Unlike a post
+//@access Private
+router.post('/unlike/:id', passport.authenticate('jwt', { session: false }), (request, response) => {
+  // Get User's Profile, Remove Post by ID from User's Profile
+  Profile.findOne({ user: request.user.id })
+    .then(profile => {
+      Post.findById(request.params.id)
+        .then(post => {
+          if (post.likes.filter(like => like.user.toString() === request.user.id).length === 0) {
+            return response.status(400).json({
+              notliked: 'You have not yet liked this post'
+            });
+          }
+
+          // Get remove index
+          const removeIndex = post.likes.map( item => item.user.toString ).indexOf(request.user.id);
+
+          // Splice remove index out of the array
+          post.likes.splice(removeIndex, 1);
+
+          // Save to DB
+          post.save().then(post => response.json(post));
+        })
+        .catch(err => response.status(404).json({
+          postnotfound: 'No post found'
+        }));
+    });
+});
+
 module.exports = router;
