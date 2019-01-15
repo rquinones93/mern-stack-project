@@ -105,6 +105,7 @@ build/Release
 
 # Dependency directories
 node_modules/
+client/node_modules
 jspm_packages/
 config/keys.js
 
